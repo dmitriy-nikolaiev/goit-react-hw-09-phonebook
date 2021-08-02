@@ -1,10 +1,13 @@
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
+// import { connect } from 'react-redux';
+
+import React, { useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+
+// import PropTypes from 'prop-types';
 
 import { changeFilter } from '../../redux/contacts/contacts-actions';
 import { getFilter } from '..//..//redux/contacts/contacts-selectors';
 
-import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import OutlinedInput from '@material-ui/core/OutlinedInput';
 import InputAdornment from '@material-ui/core/InputAdornment';
@@ -19,11 +22,22 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Filter = ({ filter, onChange }) => {
+export default function Filter() {
+  const dispatch = useDispatch();
+
+  const filter = useSelector(getFilter);
+
+  const onChange = useCallback(
+    (e) => {
+      dispatch(changeFilter(e.target.value));
+    },
+    [dispatch]
+  );
+
   const classes = useStyles();
 
   return (
-    <FormControl className={classes.root} variant="outlined">
+    <form className={classes.root} variant="outlined">
       <InputLabel htmlFor="outlined-filter-input">Filter</InputLabel>
       <OutlinedInput
         name="filter"
@@ -37,27 +51,44 @@ const Filter = ({ filter, onChange }) => {
         }
         labelWidth={40}
       />
-    </FormControl>
-
-    // <label className="filter-label">
-    //   Find contacts by name:
-    //   <input className="filter-input" name="name" value={filter} onChange={onChange} />
-    // </label>
+    </form>
   );
-};
+}
 
-const mapStateToProps = (state) => ({
-  filter: getFilter(state),
-});
-// const mapStateToProps = ({ contacts: { filter } }) => ({ filter });
+// const Filter = ({ filter, onChange }) => {
+//   const classes = useStyles();
 
-const mapDispatchToProps = (dispatch) => ({
-  onChange: (e) => dispatch(changeFilter(e.target.value)),
-});
+//   return (
+//     <form className={classes.root} variant="outlined">
+//       <InputLabel htmlFor="outlined-filter-input">Filter</InputLabel>
+//       <OutlinedInput
+//         name="filter"
+//         id="outlined-filter-input"
+//         onChange={onChange}
+//         value={filter}
+//         startAdornment={
+//           <InputAdornment position="start">
+//             <FilterListIcon />
+//           </InputAdornment>
+//         }
+//         labelWidth={40}
+//       />
+//     </form>
+//   );
+// };
 
-Filter.propTypes = {
-  filter: PropTypes.string,
-  onChange: PropTypes.func,
-};
+// const mapStateToProps = (state) => ({
+//   filter: getFilter(state),
+// });
+// // const mapStateToProps = ({ contacts: { filter } }) => ({ filter });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Filter);
+// const mapDispatchToProps = (dispatch) => ({
+//   onChange: (e) => dispatch(changeFilter(e.target.value)),
+// });
+
+// Filter.propTypes = {
+//   filter: PropTypes.string,
+//   onChange: PropTypes.func,
+// };
+
+// export default connect(mapStateToProps, mapDispatchToProps)(Filter);
