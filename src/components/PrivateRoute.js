@@ -1,5 +1,6 @@
 import { Route, Redirect } from 'react-router-dom';
-import { connect } from 'react-redux';
+// import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 import { authSelectors } from '../redux/auth';
 
@@ -9,15 +10,25 @@ import { authSelectors } from '../redux/auth';
  *    routeProps - пропсы роутера
  *    props - пропсы компонента Component, переданные при рендере PrivateRoute, которые нужно пробросить
  */
-const PrivateRoute = ({ component: Component, isAuthenticated, redirectTo, ...routeProps }) => (
-  <Route
-    {...routeProps}
-    render={(props) => (isAuthenticated ? <Component {...props} /> : <Redirect to={redirectTo} />)}
-  />
-);
+// const PrivateRoute = ({ component: Component, isAuthenticated, redirectTo, ...routeProps }) => {
 
-const mapStateToProps = (state) => ({
-  isAuthenticated: authSelectors.getIsAuthenticated(state),
-});
+const PrivateRoute = ({ component: Component, redirectTo, ...routeProps }) => {
+  const isAuthenticated = useSelector(authSelectors.getIsAuthenticated);
 
-export default connect(mapStateToProps)(PrivateRoute);
+  return (
+    <Route
+      {...routeProps}
+      render={(props) =>
+        isAuthenticated ? <Component {...props} /> : <Redirect to={redirectTo} />
+      }
+    />
+  );
+};
+
+export default PrivateRoute;
+
+// const mapStateToProps = (state) => ({
+//   isAuthenticated: authSelectors.getIsAuthenticated(state),
+// });
+
+// export default connect(mapStateToProps)(PrivateRoute);

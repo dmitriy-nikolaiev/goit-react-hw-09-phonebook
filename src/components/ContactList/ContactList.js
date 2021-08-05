@@ -1,6 +1,9 @@
-import { Component } from 'react';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
+// import { Component } from 'react';
+// import { connect } from 'react-redux';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+
+// import PropTypes from 'prop-types';
 
 import { fetchContacts } from '../../redux/contacts/contacts-operations';
 import * as contactsSelectors from '../../redux/contacts/contacts-selectors';
@@ -10,87 +13,83 @@ import ContactListItem from '../ContactListItem';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import List from '@material-ui/core/List';
 
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 
-const styles = (theme) => ({
+const useStyles = makeStyles((theme) => ({
   root: {
     width: '100%',
     maxWidth: '46ch',
     // backgroundColor: "theme.palette.background.paper",
   },
-});
+}));
 
-class ContactList extends Component {
-  componentDidMount() {
-    this.props.fetchContacts();
-  }
+export default function ContactList() {
+  const dispatch = useDispatch();
 
-  render() {
-    // const { items, filter } = this.props;
-    // const { items } = this.props;
+  const items = useSelector(contactsSelectors.getFilteredContacts);
+  const loading = useSelector(contactsSelectors.getLoading);
+  // const error = useSelector(contactsSelectors.getError);
 
-    const { classes } = this.props;
+  useEffect(() => {
+    dispatch(fetchContacts());
+  }, [dispatch]);
 
-    // let message;
-    // if (this.props.loading) {
-    //   message = 'Processing...';
-    // }
-    // if (!!this.props.error) {
-    //   message = this.props.error;
-    // }
+  const classes = useStyles();
 
-    return (
-      <>
-        {this.props.loading && <CircularProgress className="progress" />}
+  return (
+    <>
+      {loading && <CircularProgress className="progress" />}
 
-        {/* {!!this.props.error && <div>{message}</div>} */}
-        <List className={classes.root}>
-          {this.props.items.map((contact) => {
-            return <ContactListItem key={contact.id} {...contact} />;
-          })}
-        </List>
-      </>
-      // </div>
-
-      // <ul className="contact-list">
-      // {this.props.items
-      //   .map((contact) => {
-      //     return <ContactListItem key={contact.id} {...contact} />;
-      //   })}
-      // </ul>
-    );
-  }
+      <List className={classes.root}>
+        {items.map((contact) => {
+          return <ContactListItem key={contact.id} {...contact} />;
+        })}
+      </List>
+    </>
+  );
 }
 
-const mapStateToProps = (state) => {
-  return {
-    items: contactsSelectors.getFilteredContacts(state),
-    loading: contactsSelectors.getLoading(state),
-    // filter: contactsSelectors.getFilter(state),
-    error: contactsSelectors.getError(state),
-  };
-};
+// class ContactList extends Component {
+//   componentDidMount() {
+//     this.props.fetchContacts();
+//   }
+
+//   render() {
+
+//     const { classes } = this.props;
+
+//     return (
+//       <>
+//         {this.props.loading && <CircularProgress className="progress" />}
+
+//         <List className={classes.root}>
+//           {this.props.items.map((contact) => {
+//             return <ContactListItem key={contact.id} {...contact} />;
+//           })}
+//         </List>
+//       </>
+//     );
+//   }
+// }
 
 // const mapStateToProps = (state) => {
-//   const { items, filter } = state.contacts;
-//   return { items, filter };
+//   return {
+//     items: contactsSelectors.getFilteredContacts(state),
+//     loading: contactsSelectors.getLoading(state),
+//     error: contactsSelectors.getError(state),
+//   };
 // };
 
-const mapDispatchToProps = (dispatch) => ({
-  fetchContacts: () => dispatch(fetchContacts()),
-});
+// const mapDispatchToProps = (dispatch) => ({
+//   fetchContacts: () => dispatch(fetchContacts()),
+// });
 
-// ContactList.defaultProps = {
-//   filter: '',
+// ContactList.propTypes = {
+//   items: PropTypes.array.isRequired,
+//   fetchContacts: PropTypes.func,
 // };
 
-ContactList.propTypes = {
-  // filter: PropTypes.string,
-  items: PropTypes.array.isRequired,
-  fetchContacts: PropTypes.func,
-};
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(withStyles(styles, { withTheme: true })(ContactList));
+// export default connect(
+//   mapStateToProps,
+//   mapDispatchToProps
+// )(withStyles(styles, { withTheme: true })(ContactList));

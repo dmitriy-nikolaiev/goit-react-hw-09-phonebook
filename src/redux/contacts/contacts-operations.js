@@ -31,7 +31,6 @@ export const fetchContacts = () => async (dispatch) => {
 };
 
 export const addContact = (newContact) => async (dispatch) => {
-  console.log(newContact, 'newContact - addContact Operation');
   dispatch(addContactError(''));
   dispatch(addContactRequest());
 

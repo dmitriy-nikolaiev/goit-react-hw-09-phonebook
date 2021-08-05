@@ -1,4 +1,6 @@
-import { connect } from 'react-redux';
+// import { connect } from 'react-redux';
+import { useDispatch } from 'react-redux';
+
 import PropTypes from 'prop-types';
 
 import { deleteContact } from '../../redux/contacts/contacts-operations';
@@ -17,7 +19,6 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.background.paper,
     boxShadow:
       '0px 2px 4px -1px rgba(0,0,0,0.2),0px 2px 2px 0px rgba(0,0,0,0.14),0px 1px 4px 0px rgba(0,0,0,0.12)',
-    // backgroundColor: '#f7f7f7',
   },
   number: {
     padding: theme.spacing(2),
@@ -26,7 +27,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const ContactListItem = ({ id, name, number, deleteContact }) => {
+const ContactListItem = ({ id, name, number }) => {
+  const dispatch = useDispatch();
+
   const classes = useStyles();
 
   return (
@@ -40,31 +43,19 @@ const ContactListItem = ({ id, name, number, deleteContact }) => {
         }
       />
       <ListItemSecondaryAction>
-        <IconButton onClick={() => deleteContact(id)} aria-label="delete">
+        <IconButton onClick={() => dispatch(deleteContact(id))} aria-label="delete">
           <DeleteIcon />
         </IconButton>
       </ListItemSecondaryAction>
     </ListItem>
-
-    // <li className="contact-list-item">
-    //   <span className="contact-name">{name}:</span>
-    //   <span className="contact-number"> {number}</span>
-    //   <button className="contact-delete-btn" onClick={() => deleteContact(id)}>
-    //     Delete
-    //   </button>
-    // </li>
   );
 };
 
-// const mapStateToProps = (state) => {
-//   return {};
+// const mapDispatchToProps = (dispatch) => {
+//   return {
+//     deleteContact: (id) => dispatch(deleteContact(id)),
+//   };
 // };
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    deleteContact: (id) => dispatch(deleteContact(id)),
-  };
-};
 
 ContactListItem.propTypes = {
   name: PropTypes.string,
@@ -72,4 +63,5 @@ ContactListItem.propTypes = {
   onDelete: PropTypes.func,
 };
 
-export default connect(null, mapDispatchToProps)(ContactListItem);
+export default ContactListItem;
+// export default connect(null, mapDispatchToProps)(ContactListItem);

@@ -1,5 +1,8 @@
-import { Component } from 'react';
-import { connect } from 'react-redux';
+// import { Component } from 'react';
+// import { connect } from 'react-redux';
+import React, { useState, useCallback } from 'react';
+import { useDispatch } from 'react-redux';
+
 import { Link } from 'react-router-dom';
 
 import { authOperations } from '../../redux/auth';
@@ -14,21 +17,10 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
 
-// import { makeStyles } from '@material-ui/core/styles';
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
+// import { withStyles } from '@material-ui/core/styles';
 
-// const styles = {
-//   form: {
-//     width: 320,
-//   },
-//   label: {
-//     display: 'flex',
-//     flexDirection: 'column',
-//     marginBottom: 15,
-//   },
-// };
-
-const styles = (theme) => ({
+const useStyles = makeStyles((theme) => ({
   paper: {
     marginTop: theme.spacing(8),
     display: 'flex',
@@ -46,139 +38,208 @@ const styles = (theme) => ({
   submit: {
     margin: theme.spacing(3, 0, 2),
   },
-});
+}));
 
-class Register extends Component {
-  state = {
-    name: '',
-    email: '',
-    password: '',
-  };
+export default function Register() {
+  const dispatch = useDispatch();
 
-  handleChange = ({ target: { name, value } }) => {
-    this.setState({ [name]: value });
-  };
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
-  handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = useCallback(
+    (e) => {
+      e.preventDefault();
 
-    this.props.onRegister(this.state);
+      dispatch(authOperations.register({ name, email, password }));
 
-    this.setState({ name: '', email: '', password: '' });
-  };
+      setName('');
+      setEmail('');
+      setPassword('');
+    },
+    [dispatch, name, email, password]
+  );
 
-  render() {
-    const { name, email, password } = this.state;
-    const { classes } = this.props;
+  const classes = useStyles();
 
-    return (
-      <Container component="main" maxWidth="xs">
-        <CssBaseline />
-        <div className={classes.paper}>
-          <Avatar className={classes.avatar}>
-            <LockOutlinedIcon />
-          </Avatar>
-          <Typography component="h1" variant="h5">
-            Регистрация
-          </Typography>
-          <form className={classes.form} onSubmit={this.handleSubmit} noValidate>
-            <Grid container spacing={2}>
-              <Grid item xs={12}>
-                <TextField
-                  value={name}
-                  onChange={this.handleChange}
-                  autoComplete="on"
-                  name="name"
-                  variant="outlined"
-                  required
-                  fullWidth
-                  id="Name"
-                  label="Имя"
-                  autoFocus
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  name="email"
-                  value={email}
-                  onChange={this.handleChange}
-                  autoComplete="on"
-                  variant="outlined"
-                  required
-                  fullWidth
-                  id="email"
-                  label="Почта"
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  name="password"
-                  value={password}
-                  onChange={this.handleChange}
-                  autoComplete="off"
-                  variant="outlined"
-                  required
-                  fullWidth
-                  label="Пароль"
-                  type="password"
-                  id="password"
-                />
-              </Grid>
+  return (
+    <Container component="main" maxWidth="xs">
+      <CssBaseline />
+      <div className={classes.paper}>
+        <Avatar className={classes.avatar}>
+          <LockOutlinedIcon />
+        </Avatar>
+        <Typography component="h1" variant="h5">
+          Регистрация
+        </Typography>
+        <form className={classes.form} onSubmit={handleSubmit} noValidate>
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <TextField
+                value={name}
+                onChange={(e) => setName(e.currentTarget.value)}
+                autoComplete="on"
+                name="name"
+                variant="outlined"
+                required
+                fullWidth
+                id="Name"
+                label="Имя"
+                autoFocus
+              />
             </Grid>
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              color="primary"
-              className={classes.submit}
-            >
-              Зарегистрироваться
-            </Button>
-            <Grid container justifyContent="flex-end">
-              <Grid item>
-                <Link to="/login" variant="body2">
-                  Уже есть аккаунт? Войти
-                </Link>
-              </Grid>
+            <Grid item xs={12}>
+              <TextField
+                name="email"
+                value={email}
+                onChange={(e) => setEmail(e.currentTarget.value)}
+                autoComplete="on"
+                variant="outlined"
+                required
+                fullWidth
+                id="email"
+                label="Почта"
+              />
             </Grid>
-          </form>
-        </div>
-      </Container>
-
-      // <div>
-      //   <h1>Страница регистрации</h1>
-
-      //   <form onSubmit={this.handleSubmit} style={styles.form} autoComplete="off">
-      //     <label style={styles.label}>
-      //       Имя
-      //       <input type="text" name="name" value={name} onChange={this.handleChange} />
-      //     </label>
-
-      //     <label style={styles.label}>
-      //       Почта
-      //       <input type="email" name="email" value={email} onChange={this.handleChange} />
-      //     </label>
-
-      //     <label style={styles.label}>
-      //       Пароль
-      //       <input type="password" name="password" value={password} onChange={this.handleChange} />
-      //     </label>
-
-      //     <button type="submit">Зарегистрироваться</button>
-      //   </form>
-      // </div>
-    );
-  }
+            <Grid item xs={12}>
+              <TextField
+                name="password"
+                value={password}
+                onChange={(e) => setPassword(e.currentTarget.value)}
+                autoComplete="off"
+                variant="outlined"
+                required
+                fullWidth
+                label="Пароль"
+                type="password"
+                id="password"
+              />
+            </Grid>
+          </Grid>
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            color="primary"
+            className={classes.submit}
+          >
+            Зарегистрироваться
+          </Button>
+          <Grid container justifyContent="flex-end">
+            <Grid item>
+              <Link to="/login" variant="body2">
+                Уже есть аккаунт? Войти
+              </Link>
+            </Grid>
+          </Grid>
+        </form>
+      </div>
+    </Container>
+  );
 }
 
-// const mapDispatchToProps = (dispatch) => ({
-//   onRegister: (data) => dispatch(authOperations.register(data)),
-// });
+// class Register extends Component {
+//   state = {
+//     name: '',
+//     email: '',
+//     password: '',
+//   };
 
-// Сокращенная запись (оборачивает dispatch и передает data):
-const mapDispatchToProps = {
-  onRegister: authOperations.register,
-};
+//   handleChange = ({ target: { name, value } }) => {
+//     this.setState({ [name]: value });
+//   };
 
-// export default connect(null, mapDispatchToProps)(Register);
-export default connect(null, mapDispatchToProps)(withStyles(styles, { withTheme: true })(Register));
+//   handleSubmit = (e) => {
+//     e.preventDefault();
+
+//     this.props.onRegister(this.state);
+
+//     this.setState({ name: '', email: '', password: '' });
+//   };
+
+//   render() {
+//     const { name, email, password } = this.state;
+//     const { classes } = this.props;
+
+//     return (
+//       <Container component="main" maxWidth="xs">
+//         <CssBaseline />
+//         <div className={classes.paper}>
+//           <Avatar className={classes.avatar}>
+//             <LockOutlinedIcon />
+//           </Avatar>
+//           <Typography component="h1" variant="h5">
+//             Регистрация
+//           </Typography>
+//           <form className={classes.form} onSubmit={this.handleSubmit} noValidate>
+//             <Grid container spacing={2}>
+//               <Grid item xs={12}>
+//                 <TextField
+//                   value={name}
+//                   onChange={this.handleChange}
+//                   autoComplete="on"
+//                   name="name"
+//                   variant="outlined"
+//                   required
+//                   fullWidth
+//                   id="Name"
+//                   label="Имя"
+//                   autoFocus
+//                 />
+//               </Grid>
+//               <Grid item xs={12}>
+//                 <TextField
+//                   name="email"
+//                   value={email}
+//                   onChange={this.handleChange}
+//                   autoComplete="on"
+//                   variant="outlined"
+//                   required
+//                   fullWidth
+//                   id="email"
+//                   label="Почта"
+//                 />
+//               </Grid>
+//               <Grid item xs={12}>
+//                 <TextField
+//                   name="password"
+//                   value={password}
+//                   onChange={this.handleChange}
+//                   autoComplete="off"
+//                   variant="outlined"
+//                   required
+//                   fullWidth
+//                   label="Пароль"
+//                   type="password"
+//                   id="password"
+//                 />
+//               </Grid>
+//             </Grid>
+//             <Button
+//               type="submit"
+//               fullWidth
+//               variant="contained"
+//               color="primary"
+//               className={classes.submit}
+//             >
+//               Зарегистрироваться
+//             </Button>
+//             <Grid container justifyContent="flex-end">
+//               <Grid item>
+//                 <Link to="/login" variant="body2">
+//                   Уже есть аккаунт? Войти
+//                 </Link>
+//               </Grid>
+//             </Grid>
+//           </form>
+//         </div>
+//       </Container>
+//     );
+//   }
+// }
+
+// const mapDispatchToProps = {
+//   onRegister: authOperations.register,
+// };
+
+// export default connect(null, mapDispatchToProps)(withStyles(styles, { withTheme: true })(Register));

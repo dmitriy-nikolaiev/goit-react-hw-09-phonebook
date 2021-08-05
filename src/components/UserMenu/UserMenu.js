@@ -1,4 +1,7 @@
-import { connect } from 'react-redux';
+// import { connect } from 'react-redux';
+import { useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+
 import { authSelectors, authOperations } from '../../redux/auth';
 
 import { makeStyles } from '@material-ui/core/styles';
@@ -17,22 +20,15 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-// const styles = {
-//   container: {
-//     display: 'flex',
-//     alignItems: 'center',
-//   },
-//   avatar: {
-//     marginRight: 4,
-//   },
-//   name: {
-//     fontWeight: 700,
-//     marginRight: 12,
-//   },
-// };
+export default function UserMenu() {
+  const dispatch = useDispatch();
 
-const UserMenu = ({ user, onLogout }) => {
+  const user = useSelector(authSelectors.getUser);
+
+  const onLogout = useCallback(() => dispatch(authOperations.logOut()), [dispatch]);
+
   const classes = useStyles();
+
   return (
     <div className={classes.root}>
       <span className={classes.name}>Привет, {user.email}</span>
@@ -44,19 +40,33 @@ const UserMenu = ({ user, onLogout }) => {
       >
         Выйти
       </Button>
-      {/* <button type="button" onClick={onLogout}>
-      Logout
-    </button> */}
     </div>
   );
-};
+}
 
-const mapStateToProps = (state) => ({
-  user: authSelectors.getUser(state),
-});
+// const UserMenu = ({ user, onLogout }) => {
+//   const classes = useStyles();
+//   return (
+//     <div className={classes.root}>
+//       <span className={classes.name}>Привет, {user.email}</span>
+//       <Button
+//         onClick={onLogout}
+//         variant="contained"
+//         color="default"
+//         endIcon={<ExitToAppOutlined />}
+//       >
+//         Выйти
+//       </Button>
+//     </div>
+//   );
+// };
 
-const mapDispatchToProps = {
-  onLogout: authOperations.logOut,
-};
+// const mapStateToProps = (state) => ({
+//   user: authSelectors.getUser(state),
+// });
 
-export default connect(mapStateToProps, mapDispatchToProps)(UserMenu);
+// const mapDispatchToProps = {
+//   onLogout: authOperations.logOut,
+// };
+
+// export default connect(mapStateToProps, mapDispatchToProps)(UserMenu);

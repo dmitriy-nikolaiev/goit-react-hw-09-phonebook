@@ -1,4 +1,5 @@
-import { connect } from 'react-redux';
+// import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 import Navigation from '../Navigation';
 import UserMenu from '../UserMenu';
@@ -18,7 +19,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const AppBar = ({ isAuthenticated }) => {
+export default function AppBar() {
+  const isAuthenticated = useSelector(authSelectors.getIsAuthenticated);
+
   const classes = useStyles();
 
   return (
@@ -29,10 +32,10 @@ const AppBar = ({ isAuthenticated }) => {
       </Toolbar>
     </MaterialAppBar>
   );
-};
+}
 
-const mapStateToProps = (state) => ({
-  isAuthenticated: authSelectors.getIsAuthenticated(state),
-});
+// const mapStateToProps = (state) => ({
+//   isAuthenticated: authSelectors.getIsAuthenticated(state),
+// });
 
-export default connect(mapStateToProps)(AppBar);
+// export default connect(mapStateToProps)(AppBar);
